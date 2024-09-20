@@ -3,10 +3,11 @@
 import os
 import multiprocessing
 from llama_index.core import SimpleDirectoryReader
-from llama_index.readers.file import DocxReader, FlatReader, MarkdownReader
+from llama_index.readers.file import (DocxReader,MarkdownReader,FlatReader)
+# TODO:desde llama_index>0.6.33, los lectores dependen del módulo llama_hub. Dado que es una iniciativa comunitaria, verificar si cumplen con los requisitos de seguridad. Si existen consideraciones, hacer rollback.
 from custom_pdf_reader import CustomPDFReader
-from excel_reader import ExcelReader
-from metadata_parser import MetadataParser
+#from excel_reader import ExcelReader
+
 
 def get_data_path(data_dir="Data"):
     wd = os.getcwd()
@@ -15,6 +16,14 @@ def get_data_path(data_dir="Data"):
 
 def update_docs(data_dir="Data", files=None):
     data_path = get_data_path(data_dir=data_dir)
+
+    # Establecer variables de entorno para limitar los hilos utilizados por OpenBLAS y MKL para evitar conflictos
+    os.environ['OMP_NUM_THREADS'] = '1'
+    os.environ['OPENBLAS_NUM_THREADS'] = '1'
+    os.environ['MKL_NUM_THREADS'] = '1'
+    os.environ['VECLIB_MAXIMUM_THREADS'] = '1'
+    os.environ['NUMEXPR_NUM_THREADS'] = '1'
+
     workers = multiprocessing.cpu_count()
 
     # Inicializar los lectores de archivos
@@ -22,7 +31,7 @@ def update_docs(data_dir="Data", files=None):
     docx_reader = DocxReader()
     txt_reader = FlatReader()
     md_reader = MarkdownReader()
-    excel_reader = ExcelReader()
+    #excel_reader = ExcelReader()
 
     # Diccionario de extractores de archivos
     file_extractor_dict = {
@@ -31,12 +40,11 @@ def update_docs(data_dir="Data", files=None):
         ".doc": docx_reader,
         ".txt": txt_reader,
         ".md": md_reader,
-        ".xlsx": excel_reader,
-        ".xls": excel_reader,
-        # TODO: agregar más tipos de archivos, como .csv; agregar compatibilidad con SQL
+        #".xlsx": excel_reader,
+        #".xls": excel_reader,
+        # TODO: agregar más tipos de archivos, como .csv; agregar compatibilidad con bases SQL
     }
 
-    metadata_parser = MetadataParser()
 
     try:
         if files:
@@ -52,15 +60,12 @@ def update_docs(data_dir="Data", files=None):
                 input_dir=data_path,
                 recursive=True,
                 file_extractor=file_extractor_dict
-            ).load_data(num_workers=workers)
+            ).load_data(num_workers=workers) #TODO: Ver como paralelizar, dado que módulos como SmartPDFLoader no son serializables
 
-        # Extraer metadatos y agregarlos a los documentos
-        for doc in documents:
-            metadata = metadata_parser.extract_metadata(doc.text)
-            doc.extra_info = metadata  # Guardamos los metadatos en extra_info
 
     except Exception as e:
         print(f"Ocurrió un error al cargar los documentos: {e}")
         documents = []
+        raise e
 
     return documents

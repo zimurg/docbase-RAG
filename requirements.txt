@@ -9,6 +9,7 @@ protobuf
 llama_index
 llama-index-llms-huggingface
 llama-index-embeddings-huggingface
+llama-hub @ git+https://github.com/emptycrown/llama-hub.git
 pandas
-PyMuPDF
-camelot-py[cv]
+pdfplumber
+tabulate
