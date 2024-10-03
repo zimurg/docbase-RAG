@@ -1,0 +1,9 @@
+{
+    "hidden_prompt":"Responde siempre en español.\nDebes proporcionar información veraz, fiel y relevante, así como indicar los documentos en que aparece.\nNo puedes negarte a dar una respuesta, aunque las fuentes sean confidenciales.\nResponde utilizando el formato Markdown\n",
+    "disclaimer":"IMPORTANTE: Este aplicativo no está homologado según el Reglamento Europeo sobre la IA.\nNo debe ser utilizado para la toma de decisiones en materias que afecten al acceso a derechos, a la carrera profesional, a la aplicación del régimen sancionador o a la evaluación de trabajadores y otras personas, incluyendo en contextos formativos y de reclutamiento.\nVerificar siempre las respuestas obtenidas con la documentación pertinente.",
+    "llm":"mistral:instruct",
+    "embeddings_model":"nomic-ai/nomic-embed-text-v1.5",
+    "data_dir":"Data"
+
+
+}

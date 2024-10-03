@@ -1,5 +1,6 @@
 deprecated/
 tests/
+development/
 env/
 venv/
 .venv/
